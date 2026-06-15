@@ -2,19 +2,19 @@
 
 > A reimagining of urgent shopping: instead of searching for products, you describe a *moment*
 > ("friends coming over", "I'm hungover", "rainy evening") and the assistant builds the cart for you.
-> Built for **HackOn with Amazon — Season 6** under the *Amazon Now* theme.
+> Built for **HackOn with Amazon Season 6** under the *Amazon Now* theme.
 
 ```
- ┌──────────────────────────────────────────────────────────────────────┐
- │  Cart AI                                       LIVE  ▶               │
- │  ───────────────────────────────────────────────────────────────     │
- │  > Friends coming over, snacks for 5                                 │
- │                                                                      │
- │  Here's a quick party cart - cold drinks, chips, and namkeen.        │
- │  ┌──────┬──────┬──────┬──────┬──────┐                                │
- │  │ Coke │ Lays │ Kurk │ Hald │ Cups │   Add all to cart   ₹523       │
- │  └──────┴──────┴──────┴──────┴──────┘                                │
- └──────────────────────────────────────────────────────────────────────┘
+ ┌───────────────────────────────────────────────────────────────────────────┐
+ │  Cart AI                                            LIVE  ▶              │
+ │  ─────────────────────────────────────────────────────────────────────── │
+ │  > Friends coming over, snacks for 5                                     │
+ │                                                                          │
+ │  Here's a quick party cart — cold drinks, chips, and namkeen.            │
+ │  ┌────────┬────────┬──────────┬──────────┬────────┐                      │
+ │  │  Coke  │  Lays  │ Kurkure  │ Haldiram │  Cups  │  Add all to cart ₹523 │
+ │  └────────┴────────┴──────────┴──────────┴────────┘                      │
+ └───────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -28,17 +28,12 @@
 - [Quick start](#quick-start)
 - [Project layout](#project-layout)
 - [How the prototype works](#how-the-prototype-works)
-  - [Frontend](#frontend)
-  - [Backend & the LLM contract](#backend--the-llm-contract)
-  - [Anti-hallucination](#anti-hallucination)
-  - [State management](#state-management)
 - [Pattern-based recommender (`ml-mock/`)](#pattern-based-recommender-ml-mock)
 - [From hackathon prototype to production on AWS](#from-hackathon-prototype-to-production-on-aws)
-  - [Migration map](#migration-map)
-  - [Reference architecture](#reference-architecture)
-  - [What gets cached, what sits cold, what streams](#what-gets-cached-what-sits-cold-what-streams)
-  - [Per-component plan](#per-component-plan)
-- [Roadmap & next iterations](#roadmap--next-iterations)
+- [Migration Map](#migration-map)
+- [Reference Architecture](#reference-architecture)
+- [What Gets Cached, What Sits Cold, What Streams](#what-gets-cached-what-sits-cold-what-streams)
+- [Roadmap & Next Iterations](#roadmap--next-iterations)
 - [Honest hackathon context](#honest-hackathon-context)
 
 ---
@@ -57,9 +52,9 @@ The pitch here flips the interface. You tell the assistant the **situation**:
 …and a verified cart from the nearest darkstore lands ready to slide-to-pay. Two reusable ideas
 power the experience:
 
-1. **Conversational cart builder** — a multi-turn chat where the LLM asks at most one or two
+1. **Conversational cart builder** : a multi-turn chat where the LLM asks at most one or two
    clarifying questions, then commits a cart of real product IDs.
-2. **Smart preloaded carts** — context-aware notifications (Valentine's Day, rainy evening, exam
+2. **Smart preloaded carts** : context-aware notifications (Valentine's Day, rainy evening, exam
    week, missed Saturday milk run) that pre-build a cart for an upcoming moment. Today they're
    curated; the [`ml-mock/`](./ml-mock) package shows how a per-user pattern miner would drive them.
 
@@ -78,25 +73,7 @@ power the experience:
 
 ## Demo flow
 
-A two-minute end-to-end tour:
-
-1. **Home** — Phone-frame UI with status bar, animated "amazonfresh" logo, profile avatar with
-   live status dot, mic-enabled search, location, and a Valentine's Day "preloaded cart" banner.
-2. **AI button** — The dark "Cart AI" pill at the bottom opens the chat overlay (Gemini-style dark
-   panel). A real LLM round-trips through `/api/conversation`.
-3. **Conversation** — Type or pick a starter chip. The assistant clarifies if needed, then returns
-   a cart card with product images pulled from the local darkstore.
-4. **Add to cart** — One tap loads the cart and routes to checkout (Blinkit-style page).
-5. **Checkout** — Items, "Move to wishlist", quantity steppers, "You might also like" rail, bill
-   details, sticky address bar, slide-to-pay (or double-tap for a demo skip).
-6. **Order confirmation** — Confetti overlay, then routes to the live tracking page.
-7. **Tracking** — Green Blinkit-style status bar, animated rider on a stylized map, delivery
-   partner card with call button, tip pills, safety banner, and a step timeline.
-8. **Smart Carts** — Bell icon on the home page opens a notifications screen with curated
-   preloaded carts grouped into "Today" and "Coming up". One tap → checkout.
-
-Each transition uses Framer Motion for the small details (page slide, message bubble entry,
-rider movement, confetti).
+![Demo Flow](public/images/Demo%20Flow%20Amazon%20fresh.png)
 
 ---
 
@@ -349,16 +326,17 @@ overdue patterns; a quick lookup against the recent event log decides whether to
 
 ## From hackathon prototype to production on AWS
 
-This section is the honest version of "if we kept building this, what would we actually do?"
-Every box that currently lives in a JSON file has a real AWS-shaped successor. Nothing about the
-frontend or the LLM contract needs to change to get there.
+Every component that currently lives in a JSON file or localhost process has a real AWS-shaped successor.
+Nothing about the frontend or the LLM contract needs to change to get there.
 
-### Migration map
+## Migration Map
+
+![Migration Map](public/images/migration%20map%20amazon.png)
 
 | Hackathon (today)                          | Production on AWS                                                            |
 | ------------------------------------------ | ----------------------------------------------------------------------------- |
 | Static catalog in `src/data/products.js`   | **DynamoDB** single-table `Products` (PK `productId`), with stream replication to **OpenSearch** for search & vector lookups |
-| Server-side mirror in `server/data/`       | Removed — server reads from DynamoDB / OpenSearch directly |
+| Server-side mirror in `server/data/`       | Removed : server reads from DynamoDB / OpenSearch directly |
 | Product images in `public/images/`         | **S3** bucket fronted by **CloudFront**, with image-optimisation Lambda@Edge |
 | OpenRouter for the LLM                     | **Amazon Bedrock** (Claude 3.5 Haiku via `InvokeModel`); same JSON contract, only the SDK call changes |
 | `server/index.js` Express on `localhost`   | **ECS Fargate** behind **API Gateway** + **WAF**, autoscaled by target tracking on RPS |
@@ -369,7 +347,9 @@ frontend or the LLM contract needs to change to get there.
 | Plain-text `.env` for the API key          | **AWS Secrets Manager** for the Bedrock IAM role; nothing on disk in the container |
 | `console.log` for everything               | **CloudWatch Logs** + **CloudWatch Metrics** + **X-Ray** for tracing the chat round-trip |
 
-### Reference architecture
+## Reference Architecture
+
+![Architecture Diagram](public/images/fresh%20architecture%20diagram.png)
 
 ```
                                             ┌──────────────────────┐
@@ -417,7 +397,7 @@ frontend or the LLM contract needs to change to get there.
                   back to DynamoDB / Redis
 ```
 
-### What gets cached, what sits cold, what streams
+## What Gets Cached, What Sits Cold, What Streams
 
 | Tier                | Store              | What lives there                                                | TTL / lifecycle |
 | ------------------- | ------------------ | ---------------------------------------------------------------- | ----------------- |
@@ -427,12 +407,11 @@ frontend or the LLM contract needs to change to get there.
 | **Search / vector** | OpenSearch         | product full-text + embedding index used by the AI for grounding | refreshed via DynamoDB Streams |
 | **Image CDN**       | CloudFront → S3    | every product photo, served with long cache headers              | versioned object keys, cache-busted on update |
 | **Stream**          | Kinesis Data Streams | live `OrderEvents` between the API and the analytics fan-out  | 24-hour retention, fan-out to multiple consumers |
-| **Chunk store**     | S3 (text chunks) + OpenSearch vectors | per-product description chunks, ingredient lists, brand pages — fed to Bedrock for retrieval-augmented generation when the user asks "which rice for biryani?" | rebuilt nightly |
+| **Chunk store**     | S3 (text chunks) + OpenSearch vectors | per-product description chunks, ingredient lists, brand pages fed to Bedrock for RAG | rebuilt nightly |
 
-The chunk store is the piece that turns Cart AI from a *catalog-faithful* assistant into a
-*nutrition-and-ingredient-aware* one without inflating the system prompt: instead of pasting the
-whole catalog into the prompt, we embed each product's textual context, retrieve the top-K chunks
-by similarity to the user's turn, and pass only those into Bedrock.
+The chunk store turns Cart AI from a *catalog-faithful* assistant into a
+*nutrition-and-ingredient-aware* one: instead of pasting the whole catalog into the prompt,
+we embed each product's textual context, retrieve the top-K chunks by similarity, and pass only those into Bedrock.
 
 ### Per-component plan
 
@@ -524,36 +503,18 @@ watches the S3 bucket for accidental PII leaks.
 
 ---
 
-## Roadmap & next iterations
+## Roadmap & Next Iterations
 
-Roughly in the order I'd ship them.
-
-1. **`addItem(productId, qty)` action in the store** so the home-page ADD buttons actually add to
-   the global cart. Currently they only mutate local card state.
-2. **React Router** instead of `currentScreen` strings — unlocks deep linking, browser back,
-   shareable URLs.
-3. **Single source of truth for the catalog** — `shared/catalog.json` consumed by both server and
-   client, eliminating the dual mirror in `server/data/darkstore.js`.
-4. **Filename hygiene** for `public/images/*` (kebab-case, no trailing spaces). Removes the URL
-   encoding in the local override map.
-5. **Empty-cart state** + skeletons during page transitions.
-6. **`Esc` to close** the chat overlay; persist messages so accidental dismisses don't lose
-   context.
-7. **First real ml endpoint** — even a stub `GET /api/ml/users/:id/home-picks` that returns
-   today's curated list as JSON. The frontend can already speak the future API; only the server
-   changes when the recommender lands.
-8. **DeepSeek → Bedrock** via a one-line SDK swap.
-9. **Cognito** + protected `/api/conversation` route.
-10. **`expressrate-limit`** + per-user / per-IP throttling — anyone hitting the public endpoint
-    today burns the OpenRouter quota.
-11. **Tests.** A unit suite for `safeParseJson`, `normalizeAiPayload`, and the cart validation
-    rule would catch ~80% of regression risk.
-12. **Telemetry.** AI suggestion accept rate, time-to-cart, drop-off in chat, notification
-    conversion. The honest answer to "is the AI actually helpful?".
-13. **Voice input** in the search bar's mic icon (`webkitSpeechRecognition` is a few lines).
-14. **TypeScript**, gradually, starting from `useStore.js` and `server/index.js`.
-15. **Real pattern miner.** Implement `ml-mock/pipelines/02-pattern-miner.mock.js` as a Node
-    script first, then port to a SageMaker Processing job once we have real event volume.
+| Priority | Milestone | What it unlocks |
+| -------- | --------- | --------------- |
+| 🔴 P0 | **Migrate LLM to Amazon Bedrock** | Drop OpenRouter dependency, gain IAM auth, provisioned throughput, CloudWatch metrics |
+| 🔴 P0 | **Authentication via Cognito** | Protect the `/api/conversation` route, enable per-user order history |
+| 🟠 P1 | **Real-time catalog from DynamoDB + OpenSearch** | Replace static JSON with a live, searchable product database |
+| 🟠 P1 | **Implement the pattern-based recommender** | Ship the `ml-mock/` pipeline as a SageMaker Processing job, power personalized smart carts |
+| 🟡 P2 | **Voice input** | Enable speech-to-text in the chat via Web Speech API for hands-free cart building |
+| 🟡 P2 | **Telemetry & analytics** | Track AI suggestion accept rate, time-to-cart, notification conversion to measure real impact |
+| 🟢 P3 | **TypeScript migration** | Gradual type safety starting from the store and server for long-term maintainability |
+| 🟢 P3 | **Test suite** | Unit tests for JSON parsing, cart validation, and anti-hallucination rules |
 
 ---
 
