@@ -1,0 +1,95 @@
+[
+  {
+    "eventId": "01HZ8AAAA1",
+    "userId": "u_001",
+    "orderId": "ord_2026_05_05_001",
+    "timestamp": "2026-05-05T07:32:00Z",
+    "items": [
+      { "productId": "DF-001", "qty": 1, "unitPrice": 60 },
+      { "productId": "DF-002", "qty": 1, "unitPrice": 40 }
+    ],
+    "context": { "dayOfWeek": 2, "hourLocal": 7, "weather": "clear", "isHoliday": false, "isPayday": false, "deliveryPincode": "835215" },
+    "source": "manual"
+  },
+  {
+    "eventId": "01HZ8AAAA2",
+    "userId": "u_001",
+    "orderId": "ord_2026_05_07_001",
+    "timestamp": "2026-05-07T07:50:00Z",
+    "items": [{ "productId": "DF-001", "qty": 1, "unitPrice": 60 }],
+    "context": { "dayOfWeek": 4, "hourLocal": 7, "weather": "clear", "isHoliday": false, "isPayday": false, "deliveryPincode": "835215" },
+    "source": "reorder"
+  },
+  {
+    "eventId": "01HZ8AAAA3",
+    "userId": "u_001",
+    "orderId": "ord_2026_05_09_001",
+    "timestamp": "2026-05-09T08:05:00Z",
+    "items": [
+      { "productId": "DF-001", "qty": 1, "unitPrice": 60 },
+      { "productId": "DF-002", "qty": 1, "unitPrice": 40 },
+      { "productId": "DF-003", "qty": 1, "unitPrice": 55 }
+    ],
+    "context": { "dayOfWeek": 6, "hourLocal": 8, "weather": "rainy", "isHoliday": false, "isPayday": false, "deliveryPincode": "835215" },
+    "source": "manual"
+  },
+  {
+    "eventId": "01HZ8AAAA4",
+    "userId": "u_001",
+    "orderId": "ord_2026_05_12_001",
+    "timestamp": "2026-05-12T07:28:00Z",
+    "items": [{ "productId": "DF-001", "qty": 1, "unitPrice": 60 }],
+    "context": { "dayOfWeek": 2, "hourLocal": 7, "weather": "clear", "isHoliday": false, "isPayday": false, "deliveryPincode": "835215" },
+    "source": "manual"
+  },
+  {
+    "eventId": "01HZ8AAAA5",
+    "userId": "u_001",
+    "orderId": "ord_2026_05_14_001",
+    "timestamp": "2026-05-14T07:42:00Z",
+    "items": [
+      { "productId": "DF-001", "qty": 1, "unitPrice": 60 },
+      { "productId": "DF-002", "qty": 1, "unitPrice": 40 }
+    ],
+    "context": { "dayOfWeek": 4, "hourLocal": 7, "weather": "clear", "isHoliday": false, "isPayday": false, "deliveryPincode": "835215" },
+    "source": "manual"
+  },
+  {
+    "eventId": "01HZ8AAAA6",
+    "userId": "u_001",
+    "orderId": "ord_2026_05_16_001",
+    "timestamp": "2026-05-16T07:55:00Z",
+    "items": [
+      { "productId": "DF-001", "qty": 2, "unitPrice": 60 },
+      { "productId": "BB-001", "qty": 1, "unitPrice": 185 }
+    ],
+    "context": { "dayOfWeek": 6, "hourLocal": 7, "weather": "clear", "isHoliday": false, "isPayday": false, "deliveryPincode": "835215" },
+    "source": "manual"
+  },
+  {
+    "eventId": "01HZ8BBBB1",
+    "userId": "u_001",
+    "orderId": "ord_2026_06_01_001",
+    "timestamp": "2026-06-01T09:14:00Z",
+    "items": [
+      { "productId": "GE-003", "qty": 1, "unitPrice": 275 },
+      { "productId": "GE-005", "qty": 1, "unitPrice": 155 }
+    ],
+    "context": { "dayOfWeek": 1, "hourLocal": 9, "weather": "clear", "isHoliday": false, "isPayday": true, "deliveryPincode": "835215" },
+    "source": "manual"
+  },
+  {
+    "eventId": "01HZ8BBBB2",
+    "userId": "u_001",
+    "orderId": "ord_2026_05_03_001",
+    "timestamp": "2026-05-03T18:20:00Z",
+    "items": [
+      { "productId": "QB-001", "qty": 1, "unitPrice": 55 },
+      { "productId": "QB-002", "qty": 1, "unitPrice": 10 },
+      { "productId": "QB-003", "qty": 1, "unitPrice": 110 },
+      { "productId": "QB-004", "qty": 1, "unitPrice": 20 }
+    ],
+    "context": { "dayOfWeek": 0, "hourLocal": 18, "weather": "rainy", "isHoliday": false, "isPayday": false, "deliveryPincode": "835215" },
+    "source": "preloaded-cart"
+  }
+]
